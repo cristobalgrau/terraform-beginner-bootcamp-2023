@@ -29,6 +29,7 @@ tasks:
 
 But after initialize the envrionment on GitPod we found that the Terminal stuck during the installation and was waiting for a user interaction to continue. This is a bug that it need to be fixed.
 
-ADD SCREENSHOT HERE
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/59d32ea2-797d-4046-a54b-b42632388623)
+
 
 To do that we have to debug the code, runing the code line by line to check where is the issue.
