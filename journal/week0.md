@@ -76,14 +76,13 @@ The bash script is located in [./bin/install_terraform_cli](./bin/install_terraf
 
 #### Execution Considerations
 
-For better portability for different OS distributions, we will use a Shebang format at the beginning to tell the loader what is the interpreter to run the code.
+For better portability for different OS distributions, we will use a [Shebang format](https://en.wikipedia.org/wiki/Shebang_(Unix)) at the beginning to tell the loader what is the interpreter to run the code.
 
 In this case, we will add at the beginning the following:
 
 ```sh
 #!/usr/bin/env bash
 ```
-https://en.wikipedia.org/wiki/Shebang_(Unix)
 
 To use the script in `.gitpod.yml` we need to point it with the following command: 
 ```sh
