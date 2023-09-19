@@ -138,4 +138,49 @@ tasks:
       source ./bin/install_terraform_cli
 ```
 
+## Environment Variables (Env Vars)
+
+Environment variables allow us to pass information between commands and subprocesses.
+
+### Env Commands
+
+- `env` used to list out all the Env Vars
+- `env | grep EXAMPLE` It will filter the env vars and show all that have EXAMPLE on their name
+- `export HELLO='world'` it will make this variable available for all child terminals until restart the workspace
+- `unset HELLO` will erase the value of the variable
+- `echo $HELLO` will print the env var value 
+
+We can set env vars temporarily when running a command
+
+```sh
+HELLO='world' ./bin/print_message
+```
+
+Within a bash script, we can set env without writing export eg.
+
+```sh
+#!/usr/bin/env bash
+
+HELLO='world'
+
+echo $HELLO
+```
+
+### Scope of env vars
+
+Every bash terminal window open will have its own env vars. If you want the env vars to persist to all future bash terminals you need to set env vars in your bash profile `.bash_profile`
+
+### Persistent Env Vars in Gitpod
+
+We can persist env vars into Gitpod by storing them in Gitpod Secrets Storage.
+
+```
+gp env HELLO='world'
+```
+
+All future workspaces launched will set the env vars for all bash terminals opened in those workspaces.
+
+You can also set en vars in the `.gitpod.yml` but this can only contain non-sensitive env vars.
+
+
 
