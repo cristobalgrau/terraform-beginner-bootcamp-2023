@@ -224,4 +224,52 @@ If it is successful you should see a JSON payload return that looks like this:
 }
 ```
 
+## Terraform Basics
+
+### Terraform Registry
+
+The Terraform Registry is an interactive resource for discovering a wide selection of integrations (providers), and configuration packages (modules). [registry.terraform.io](https://registry.terraform.io/)
+
+- **Providers** is an interface to APIs that will allow to create resources in terraform.
+- **Modules** are a way to make large amount of terraform code modular, portable and sharable.
+
+### Terraform Workflow
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/2d02b62c-245f-4c80-8874-97ee354b836f)
+
+
+`terraform init`
+Used to initialize a working directory containing terraform config files. It will download the binaries for the terraform providers we will use in this project
+
+`terraform validate`
+Validate the terraform configuration files in that respective directory to ensure they are Syntactically valid and internally consistent.
+
+`terraform plan`
+creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure.
+
+We can output this changeset ie. "plan" to be passed to an apply, but often you can just ignore outputting.
+
+`terraform apply`
+This will run the plan and pass the changes to be executed by Terraform
+
+This command will prompt a stop waiting for the user to confirm yes or no to execute the plan. You can auto-approve the command with `terraform apply --auto-approve`
+
+`terraform destroy`
+Used to destroy the Terraform-managed infrastructure. It will ask you for confirmation before destroyed. You can auto-approve with the command `terraform destroy --auto-aprove`
+
+### Terraform Files
+
+`.terraform.tfstate` is a JSON formatted mapping file that contains information about the current state of your infrastructure.
+
+This file **should not be committed** to your Versioning Control System.
+
+This file can contain sensitive data.
+
+If you lose this file, you lose knowing the state of your infrastructure.
+
+`.terraform.tfstate.backup` is the previous state file state.
+
+### Terraform Directory
+
+`.terraform` directory contains binaries of terraform providers. This directory should not be committed either.
 
