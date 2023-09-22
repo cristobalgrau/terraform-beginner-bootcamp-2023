@@ -182,5 +182,46 @@ All future workspaces launched will set the env vars for all bash terminals open
 
 You can also set en vars in the `.gitpod.yml` but this can only contain non-sensitive env vars.
 
+## AWS CLI Installation
+
+To install the AWS CLI we created a bash script [`./bin/install_aws_cli`](./bin/install_aws_cli)
+
+Following the indication from [CLI Install - AWS Documentation](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html#getting-started-install-instructions), for Linux we have to use the following instruction:
+
+```sh
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+
+To set the Env Vars we follow the indications from [Env Vars to configure the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html)
+
+```sh
+export AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+export AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+export AWS_DEFAULT_REGION=us-west-2
+```
+
+To set the Env Vars on Gitpod Secrets do the following:
+```sh
+gp env AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
+gp env AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+gp env AWS_DEFAULT_REGION=us-west-2
+```
+
+We can verify if the credentials were set correctly by running the following AWS command:
+```sh
+aws sts get-caller-identity
+```
+
+If it is successful you should see a JSON payload return that looks like this:
+
+```json
+{
+    "UserId": "AIEAVUO15ZPVHJ5WIJ5KR",
+    "Account": "123456789012",
+    "Arn": "arn:aws:iam::123456789012:user/terraform-beginner-bootcamp"
+}
+```
 
 
