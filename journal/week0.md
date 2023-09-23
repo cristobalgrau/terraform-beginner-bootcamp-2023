@@ -491,3 +491,64 @@ Provide the following code in the file `credentials.tfrc.json`:
 
 And then you should be able to run the command `terraform login` without issues
 
+## Refactor Automated Terraform Login
+
+First, we need to create a bash script file to create the file `credentials.tfrc.json` where we can set the token value with an Env Vars. The token has to be created with a long expiration time according to your planned time for this lab.
+
+Using ChatGPT to generate the bash script we have the following code and save it on the file [`generate_tfrc_credentials`](/bin/generate_tfrc_credentials):
+
+```sh
+#!/usr/bin/env bash
+
+# Define target directory and file
+TARGET_DIR="/home/gitpod/.terraform.d"
+TARGET_FILE="${TARGET_DIR}/credentials.tfrc.json"
+
+# Check if TERRAFORM_CLOUD_TOKEN is set
+if [ -z "$TERRAFORM_CLOUD_TOKEN" ]; then
+    echo "Error: TERRAFORM_CLOUD_TOKEN environment variable is not set."
+    exit 1
+fi
+
+# Check if directory exists, if not, create it
+if [ ! -d "$TARGET_DIR" ]; then
+    mkdir -p "$TARGET_DIR"
+fi
+
+# Generate credentials.tfrc.json with the token
+cat > "$TARGET_FILE" << EOF
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "$TERRAFORM_CLOUD_TOKEN"
+    }
+  }
+}
+EOF
+
+echo "${TARGET_FILE} has been generated."
+```
+
+
+
+To make the file `generate_tfrc_credentials` executable we have to chmod it
+
+```
+chmod u+x ./bin/generate_tfrc_credentials
+```
+
+You can use the following command in the Terminal to verify if the file was created and its content:
+
+```sh
+cat /home/gitpod/.terraform.d/credentials.tfrc.json
+```
+
+Then you have to call the bash script file from `gitpod.yml` by adding the following command below the install_aws_cli call:
+
+```sh
+source ./bin/generate_tfrc_credentials
+```
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/983897bf-63e2-467b-a580-12234544f8a6)
+
+
