@@ -549,6 +549,74 @@ Then you have to call the bash script file from `gitpod.yml` by adding the follo
 source ./bin/generate_tfrc_credentials
 ```
 
-![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/983897bf-63e2-467b-a580-12234544f8a6)
+`.gitpod.yml`:
+```sh
+tasks:
+  - name: terraform
+    before: |
+      source ./bin/install_terraform_cli
+      source ./bin/generate_tfrc_credentials
+  - name: aws-cli
+    env:
+      AWS_CLI_AUTO_PROMPT: on-partial
+    before: |
+      source ./bin/install_aws_cli
+vscode:
+  extensions:
+    - amazonwebservices.aws-toolkit-vscode
+    - hashicorp.terraform
+```
 
+## Creating an Alias for `terraform` command
+
+We can create an alias for shorten call the command `terraform`. We will use the alias 'tf'.
+
+To do that we have to open the file `bash_profile` with the following command
+
+```sh
+open ~/.bash_profile
+```
+
+Then in the `bash_profile` we add the following code:
+
+```sh
+alias tf="terraform"
+```
+
+Using ChatGTP we generate the following bash script to add the alias in the `bash_profile` everytime we open the gitpod workspace, due to in the above instruction, after you restart the gitpod environment it will not be there.
+
+The bash script will be save it in out bin folder as [`set_tf_alias`](./bin/set_tf_alias)
+
+```sh
+#!/usr/bin/env bash
+
+# Check if the alias already exists in the .bash_profile
+grep -q 'alias tf="terraform"' ~/.bash_profile
+
+# $? is a special variable in bash that holds the exit status of the last command executed
+if [ $? -ne 0 ]; then
+    # If the alias does not exist, append it
+    echo 'alias tf="terraform"' >> ~/.bash_profile
+    echo "Alias added successfully."
+else
+    # Inform the user if the alias already exists
+    echo "Alias already exists in .bash_profile."
+fi
+
+# Optional: source the .bash_profile to make the alias available immediately
+source ~/.bash_profile
+```
+
+Making executable the file
+
+```sh
+chmod u+x ./bin/set_tf_alias
+```
+
+Later we have to add to `.gitpod.yml` file to run in both Terminal (terraform and aws-cli):
+
+```sh
+source ./bin/set_tf_alias
+```
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/9cc30c75-b1b0-433b-a1e5-45a8c83b93ec)
 
