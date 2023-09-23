@@ -311,3 +311,96 @@ The Terraform Lock File **should be committed** to your Version Control System (
 
 `.terraform` directory contains binaries of terraform providers. This directory should not be committed either.
 
+## Creating S3 Bucket in Terraform
+
+We have to look in the Terraform Registry the AWS provider and look for S3 (Simple Storage). From there we will use the following code and add to `main.tf`
+
+```terraform
+resource "aws_s3_bucket" "example" {
+  bucket = random_string.bucket_name.result
+}
+```
+
+Then after run `terraform plan` it shows an error due to there is no AWS provider installed yet
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/f1c2be32-65c0-4f03-b158-c199e224ae11)
+
+Then we look for the code to use the AWS provider and add it to `main.tf`
+
+```terraform
+terraform {
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "5.17.0"
+    }
+  }
+}
+
+provider "aws" {
+  # Configuration options
+}
+```
+
+If you run the command `terraform command` with two lines with 'required_providers' will shows the following error due to it is not allow to have more than one 'required_providers', all providers should have to be in the same block
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/e1e7d937-ce9c-4772-837c-623ec0f420f2)
+
+We have to modify the `main.tf` code as follows:
+
+```terraform
+terraform {
+  required_providers {
+    random = {
+      source = "hashicorp/random"
+      version = "3.5.1"
+    }
+    aws = {
+      source = "hashicorp/aws"
+      version = "5.17.0"
+    }
+  }
+}
+```
+
+Even with this, it will still show error
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/4d718ab4-4563-48a6-9a66-5b90d286c23a)
+
+This is because any time you add a new provider you have to run again the `terraform init` to recreate a new binary file with the updated providers.
+
+After that, the result will be like this:
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/fbc1013a-4ace-4593-a8b4-d114c26ffa5f)
+
+Running the command `terraform apply`, now we have an issue with the S3 Bucket name due to by AWS rules, it is only allow lower case for the name
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/3b5485bb-c94a-41a3-b301-3bc10ea09b99)
+
+Looking for [hashicorp/random_string documentation](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) we can exclude and allow some options in the string. 
+
+The random_string commands will be updated like this:
+
+```terraform
+resource "random_string" "bucket_name" {
+  lower = true
+  upper = false 
+  length = 32
+  special = false
+}
+```
+
+Running `terraform plan`
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/769f015c-82ff-4654-94bc-38143eff6876)
+
+Running `terraform apply`
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/f1239249-ec04-43ee-9f60-0910feb18587)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/a6dbcd37-77dc-4418-ad5e-e08a859199ae)
+
+At the end let run the command `terraform destroy` to eliminate the S3 bucket
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/01eb3a3c-8f89-4d04-a9f8-992a0d6e039c)
+
