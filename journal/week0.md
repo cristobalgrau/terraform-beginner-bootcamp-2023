@@ -233,28 +233,62 @@ The Terraform Registry is an interactive resource for discovering a wide selecti
 - **Providers** is an interface to APIs that will allow to create resources in terraform.
 - **Modules** are a way to make large amount of terraform code modular, portable and sharable.
 
+### Terraform Random Provider
+
+The "random" provider allows the use of randomness within Terraform configurations. The "random" provider provides an idea of managed randomness: it provides resources that generate random values during their creation and then hold those values steady until the inputs are changed.
+
+[hashicorp/random](https://registry.terraform.io/providers/hashicorp/random/3.5.1)
+
+To install this provider, copy and paste this code into your Terraform configuration. Then, run terraform init.
+
+```terraform
+terraform {
+  required_providers {
+    random = {
+      source = "hashicorp/random"
+      version = "3.5.1"
+    }
+  }
+}
+
+provider "random" {
+  # Configuration options
+}
+```
+
+This provider has the following resources:
+
+- `random_id` generates random numbers that are intended to be used as unique identifiers for other resources.
+- `random_integer` generates random values from a given range, described by the min and max attributes of a given resource.
+- `random_password` Identical to random_string with the exception that the result is treated as sensitive and, thus, not displayed in the console output.
+- `random_pet` generates random pet names that are intended to be used as unique identifiers for other resources.
+- `random_shuffle` generates a random permutation of a list of strings given as an argument.
+- `random_string` generates a random permutation of alphanumeric characters and optionally special characters.
+- `random_uuid` generates random uuid string that is intended to be used as unique identifiers for other resources.
+
+
 ### Terraform Workflow
 
 ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/2d02b62c-245f-4c80-8874-97ee354b836f)
 
 
-`terraform init`
+- `terraform init`
 Used to initialize a working directory containing terraform config files. It will download the binaries for the terraform providers we will use in this project
 
-`terraform validate`
+- `terraform validate`
 Validate the terraform configuration files in that respective directory to ensure they are Syntactically valid and internally consistent.
 
-`terraform plan`
+- `terraform plan`
 creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure.
 
-We can output this changeset ie. "plan" to be passed to an apply, but often you can just ignore outputting.
+  We can output this changeset ie. "plan" to be passed to an apply, but often you can just ignore outputting.
 
-`terraform apply`
+- `terraform apply`
 This will run the plan and pass the changes to be executed by Terraform
 
-This command will prompt a stop waiting for the user to confirm yes or no to execute the plan. You can auto-approve the command with `terraform apply --auto-approve`
+  This command will prompt a stop waiting for the user to confirm yes or no to execute the plan. You can auto-approve the command with `terraform apply --auto-approve`
 
-`terraform destroy`
+- `terraform destroy`
 Used to destroy the Terraform-managed infrastructure. It will ask you for confirmation before destroyed. You can auto-approve with the command `terraform destroy --auto-aprove`
 
 ### Terraform Files
@@ -268,6 +302,10 @@ This file can contain sensitive data.
 If you lose this file, you lose knowing the state of your infrastructure.
 
 `.terraform.tfstate.backup` is the previous state file state.
+
+`.terraform.lock.hcl` contains the locked versioning for the providers or modules that should be used with this project.
+
+The Terraform Lock File **should be committed** to your Version Control System (VSC) eg. Github
 
 ### Terraform Directory
 
