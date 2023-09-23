@@ -404,3 +404,90 @@ At the end let run the command `terraform destroy` to eliminate the S3 bucket
 
 ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/01eb3a3c-8f89-4d04-a9f8-992a0d6e039c)
 
+## Terraform Cloud
+
+Terraform is used for defining and provisioning infrastructure resources as code, which allows for the automation and management of cloud resources, on-premises infrastructure, and more. It provides a centralized hub for collaboration, version control, state management, and more, which can lead to improved infrastructure management practices and increased efficiency in deploying and managing infrastructure as code.
+
+### Terraform Cloud Structucture
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/8c61474f-5b06-4562-81e4-85f01cce4b0e)
+
+#### Project
+
+ It provides a way to group related workspaces and associated infrastructure code. Projects are typically used to organize infrastructure work by teams, departments, or specific projects within your organization.
+
+#### Workspaces
+
+Workspace is a specific environment for managing and executing Terraform configurations. Each workspace corresponds to a set of infrastructure code (Terraform configurations) and associated variables and settings.
+
+### Creating the environment in Terraform Cloud Organizations
+
+After you create your Project and Workspace, Terraform will show you the commands to associate the Terraform configuration files and the next instruction to run your terraform plan
+
+Add the following codes to `main.tf`
+
+```terraform
+  cloud {
+    organization = "GrauTerraformLab"
+
+    workspaces {
+      name = "terra-house-lab"
+    }
+  }
+```
+
+After run `terraform init` it shows the following error
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/92f41345-52ab-41a6-9184-469817722e5e)
+
+Following the instructions received from the Terraform init command, we have to run the command `terraform login`
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/eb81761c-991e-49e1-a897-788df5e7de66)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/5efc13ff-9074-4c1c-a959-15d5d3a9bf4a)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/cac22846-e7b6-441c-98d0-46d66f338699)
+
+Then you have to open the URL shown in the prompt and create the Token
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/37a84682-7f9e-4b05-8440-5dc317c36ecc)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/33c7b0a9-a4f4-4938-a0f7-8ef1faa095ab)
+
+Run `terraform init` again to migrate
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/61a3a5dd-8724-4668-b164-f0b31b0de57a)
+
+Then you can see in your Terraform Cloud workspace the following showing your buckets created and migrated to Terraform Cloud
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/2aabd992-fc3c-45b3-8587-1ba309e3492f)
+
+### Possible issues running `terraform login`
+
+Sometimes you can have problems/erros when entering the Token in the login process, if that the case then you have to manually generate a token in Terraform Cloud
+
+```
+https://app.terraform.io/app/settings/tokens?source=terraform-login
+```
+
+Then create and open the file manually with the following commands:
+
+```sh
+touch /home/gitpod/.terraform.d/credentials.tfrc.json
+open /home/gitpod/.terraform.d/credentials.tfrc.json
+```
+
+Provide the following code in the file `credentials.tfrc.json`:
+
+```json
+{
+  "credentials": {
+    "app.terraform.io": {
+      "token": "YOUR-TERRAFORM-CLOUD-TOKEN"
+    }
+  }
+}
+```
+
+And then you should be able to run the command `terraform login` without issues
+
