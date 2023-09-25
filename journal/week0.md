@@ -1,5 +1,32 @@
 # Terraform Beginner Bootcamp 2023 - Week 0
 
+- [Semantic Versioning](#semantic-versioning)
+- [Installing the Terraform CLI](#installing-the-terraform-cli)
+  * [Refactoring into Bash Scripts](#refactoring-into-bash-scripts)
+    + [Execution Considerations](#execution-considerations)
+    + [Gitpod Lifecycle](#gitpod-lifecycle)
+- [Environment Variables (Env Vars)](#environment-variables-env-vars)
+  * [Env Commands](#env-commands)
+  * [Scope of env vars](#scope-of-env-vars)
+  * [Persistent Env Vars in Gitpod](#persistent-env-vars-in-gitpod)
+- [AWS CLI Installation](#aws-cli-installation)
+- [Terraform Basics](#terraform-basics)
+  * [Terraform Registry](#terraform-registry)
+  * [Terraform Random Provider](#terraform-random-provider)
+  * [Terraform Workflow](#terraform-workflow)
+  * [Terraform Files](#terraform-files)
+  * [Terraform Directory](#terraform-directory)
+- [Creating S3 Bucket in Terraform](#creating-s3-bucket-in-terraform)
+- [Terraform Cloud](#terraform-cloud)
+  * [Terraform Cloud Structucture](#terraform-cloud-structucture)
+    + [Project](#project)
+    + [Workspaces](#workspaces)
+  * [Creating the environment in Terraform Cloud Organizations](#creating-the-environment-in-terraform-cloud-organizations)
+  * [Possible issues running `terraform login`](#possible-issues-running-terraform-login)
+- [Refactor Automated Terraform Login](#refactor-automated-terraform-login)
+- [Creating an Alias for `terraform` command](#creating-an-alias-for-terraform-command)
+
+
 ## Semantic Versioning
 
 It will be used the semantic versioning for tagging following the standards from [semver.org](https://semver.org/)
