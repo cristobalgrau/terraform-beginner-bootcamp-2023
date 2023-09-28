@@ -88,7 +88,7 @@ Losing your Terraform state file can be problematic because it contains critical
 
 If for any reason you close your workspace environment before run `terraform destroy` you will lose your statefile. Then you will have to delete all your cloud infrastructure manually.
 
-Another way is to use the command `terraform import` but it could not work for all cloud recources, you have to verify the documentation of every Terraform provider you use to see which if they support the import commmand.
+Another way is to use the command `terraform import` but it could not work for all cloud resources, you have to verify the documentation of every Terraform provider you use to see if they support the import command.
 
 ### `terraform import`
 
@@ -108,11 +108,25 @@ This will bring our statefile back, but it didn't import all, and in our case di
 
 We had to perform the following tasks:
 
-- Remove random from `providers.tf`. 
+- Remove random from `providers.tf`.
+
+  ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/3de0d2ea-024f-4877-9c6f-305139b6f4e2)
+
 - Remove random from `main.tf`
+
+  ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/e9145d1f-ed6a-4071-882c-9ba38f6adc37)
+  
 - Define the variable `bucket_name` in `variable.tf`
+
+  ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/d0106268-ef8d-44e8-bdf0-aae612477ac7)
+
 - create the variable (bucket_name) in `terraform.tfvars`
+
+  ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/2f12ea6d-b500-41c4-a6db-eb754cc0abb0)
+
 - Modify `outputs.tf` to remove the call to random
+
+  ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/3e43b957-fcd0-4e58-9f24-ca951f807572)
 
 To verify your procedure is going well, you can be running `terraform plan` and see what it will do if you apply.
 
