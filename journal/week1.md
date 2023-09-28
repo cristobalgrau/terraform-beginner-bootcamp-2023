@@ -82,8 +82,43 @@ In Terraform, variable precedence determines which value a variable will take wh
 5. **Module Input Variables**: When using Terraform modules, the input variables you pass to a module during module instantiation take precedence over any other values.
 6. **Terraform Cloud or Remote State BAckends**: When using Terraform Cloud or remote state backends, variable values can be set or managed remotely, which can take precedence over local values.
 
+## Configuration Drift - What to do
 
+Losing your Terraform state file can be problematic because it contains critical information about the infrastructure resources managed by Terraform. Losing the state file can make it difficult to update or destroy resources and can lead to inconsistencies between your infrastructure and Terraform's understanding of it.
 
+If for any reason you close your workspace environment before run `terraform destroy` you will lose your statefile. Then you will have to delete all your cloud infrastructure manually.
 
+Another way is to use the command `terraform import` but it could not work for all cloud recources, you have to verify the documentation of every Terraform provider you use to see which if they support the import commmand.
+
+### `terraform import`
+
+First, you need to identify the existing resource you want to import into Terraform. You'll need to know the resource's type and its unique identifier (usually an ID or ARN). Then you can run the following command:
+
+```sh
+terraform import aws_s3_bucket.bucket bucket-name
+```
+
+Before running `terraform import` you need to run `terraform init` to have all the terraform plugins needed (see picture below)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/6c144703-4e1d-4570-a1d6-60ad64f7ab35)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/b43dc80b-8c98-40c7-a112-a0b296484c63)
+
+This will bring our statefile back, but it didn't import all, and in our case didn't bring the random provider. But if we bring back "random provider" then it will create a new bucket name instead of using our last one that keeps open after we close the workspace without destroy. So, the best way to keep our consistency is to stop using Random providers and fix a bucket_name in our variables.
+
+We had to perform the following tasks:
+
+- Remove random from `providers.tf`. 
+- Remove random from `main.tf`
+- Define the variable `bucket_name` in `variable.tf`
+- create the variable (bucket_name) in `terraform.tfvars`
+- Modify `outputs.tf` to remove the call to random
+
+To verify your procedure is going well, you can be running `terraform plan` and see what it will do if you apply.
+
+**Here is the documentation used:**
+
+- [Terraform Import](https://developer.hashicorp.com/terraform/cli/import)
+- [AWS S3 Bucket Import](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket#import)
 
 
