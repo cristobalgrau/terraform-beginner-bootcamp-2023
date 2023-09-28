@@ -68,3 +68,22 @@ If you have defined variable values in both `terraform.tfvars` and in the Terraf
 ### auto.tfvars
 
 `auto.tfvar` is another filename recognized by Terraform for storing variable values in HashiCorp Configuration Language (HCL) format, similar to `terraform.tfvars`. However, there is one key difference: `auto.tfvars` is automatically loaded by Terraform without the need for specifying it on the command line.
+
+The difference between `terraform.tfvars` and `auto.tfvars` is that with `terraform.tfvars` you have explicit control over when to load the values by specifying the filename as a command-line argument, this can be useful when you want to switch between different sets of variable values. With `auto.tfvars` the values are automatically loaded, which can be convenient, but it may lead to unexpected behavior if you have multiple Terraform configurations or shared modules.
+
+### Order of Terraform Variables
+
+In Terraform, variable precedence determines which value a variable will take when it's defined in multiple places. Understanding variable precedence is crucial for managing Terraform configurations effectively. Here's a general order of precedence for variables:
+
+1. **Environment Variables**: set in your shell environment take the highest precedence. Terraform allows you to define variables by prefixing their names with TF_VAR_. For example, if you set an environment variable like TF_VAR_instance_type, it will override any other value for the instance_type variable.
+2. **CLI Flags**: Values specified using command-line flags like -var or -var-file when running Terraform commands take precedence over environment variables.
+3. **Variable Files**: Values specified in variable files (e.g., `terraform.tfvars`, `auto.tfvars`, or custom `.tfvars files`) take precedence over environment variables and command-line flags.
+4. **Default values in Configuration**: Variables may have default values defined within the Terraform configuration itself. If no other value is provided, the default value will be used.
+5. **Module Input Variables**: When using Terraform modules, the input variables you pass to a module during module instantiation take precedence over any other values.
+6. **Terraform Cloud or Remote State BAckends**: When using Terraform Cloud or remote state backends, variable values can be set or managed remotely, which can take precedence over local values.
+
+
+
+
+
+
