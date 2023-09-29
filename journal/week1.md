@@ -17,7 +17,7 @@ PROJECT_ROOT
 
 [Standard Module Structure](https://developer.hashicorp.com/terraform/language/modules/develop/structure)
 
-## Terraform and Imput Variables
+## Terraform and Input Variables
 
 ### Terraform Cloud Variables
 
@@ -134,5 +134,103 @@ To verify your procedure is going well, you can be running `terraform plan` and 
 
 - [Terraform Import](https://developer.hashicorp.com/terraform/cli/import)
 - [AWS S3 Bucket Import](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket#import)
+
+### Terraform refresh
+
+Is a command used to update the Terraform state file (`terraform.tfstate`) with the real-world state of the infrastructure resources managed by Terraform. This command does not make any changes to the infrastructure itself; instead, it queries the current state of the resources and updates the state file with the latest information.
+
+This is useful when changes are made to the infrastructure outside of Terraform (e.g., manually through the cloud provider's console or CLI), and you want to ensure that your Terraform state is up to date with those changes.
+
+The command `terraform refresh` is deprecated, instead is better use:
+
+```terraform
+terraform apply -refresh-only
+
+```
+
+This alternative command will present an interactive prompt with the opportunity to review the changes detected before committing them to the state.
+
+## Terraform Modules
+
+Terraform modules are a fundamental concept in Terraform that allows you to encapsulate and organize your infrastructure code into reusable and shareable components. Modules enable you to create custom abstractions and define infrastructure resources and their configurations in a modular and consistent way.
+
+It is recommended to place modules in a `modules` directory when locally developing modules 
+
+### Passing Input Variables to a Module
+
+We can pass input variables to our module every time we call it.
+
+```tf
+module "terrahouse_aws" {
+  source = "./modules/terrahouse_aws"
+  user_uuid = var.user_uuid
+  bucket_name = var.bucket_name
+}
+```
+
+The module has to declare the terraform variables in its own `variables.tf`
+
+```terraform
+variable "user_uuid" {
+  type    = string
+  default = "default_value1"
+}
+
+variable "bucket_name" {
+  type    = string
+  default = "default_value2"
+}
+```
+
+### Modules source
+
+In Terraform, the **module block** allows you to use a module in your configuration. The **source** argument within the **module** block specifies where the module is located. The **source** argument can point to various sources, depending on where the module is defined or hosted.
+
+Here are the common ways to specify the source for a module:
+
+1. **Local Path**
+
+You can specify a local path to a directory containing the module's configuration files. This is useful during development or when the module is part of the same codebase.
+
+```terraform
+module "example" {
+  source = "./path/to/module"
+}
+
+```
+
+1. **GitHub Repository**
+you can use the short syntax by specifying the GitHub username, repository name, and the module path within the repository. Terraform will use the latest release of the module.
+
+```terraform
+module "example" {
+  source = "github.com/your-username/your-module-repo/module-path"
+}
+```
+
+1. Terraform Registry
+You can use the registry as the source. Specify the full namespace and module name.
+
+```terraform
+module "example" {
+  source = "namespace/module-name/registry"
+}
+```
+
+[Modules Sources](https://developer.hashicorp.com/terraform/language/modules/sources)
+
+
+### Refactoring the code into modules
+
+To refactor our actual terraform structure into a module, we had to move all the infrastructure code to the `.tf` files created inside the module folder and just leave the needed one in our root just to be able to call the module and receive output.
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/2bdf1299-39c2-4d79-b3f6-c002d0faf5dc)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/94db6f58-e1e3-4dda-ae9f-4bcbdc8f67ec)
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/f045fc64-385e-4ecd-a395-44172a3cb20a)
+
+
+
 
 
