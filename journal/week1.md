@@ -189,33 +189,31 @@ In Terraform, the **module block** allows you to use a module in your configurat
 Here are the common ways to specify the source for a module:
 
 1. **Local Path**
+  You can specify a local path to a directory containing the module's configuration files. This is useful during development or when the module is part of the same codebase.
 
-You can specify a local path to a directory containing the module's configuration files. This is useful during development or when the module is part of the same codebase.
+  ```terraform
+  module "example" {
+    source = "./path/to/module"
+  }
+  ```
 
-```terraform
-module "example" {
-  source = "./path/to/module"
-}
+2. **GitHub Repository**
+  you can use the short syntax by specifying the GitHub username, repository name, and the module path within the repository. Terraform will use the latest release of the module.
 
-```
+  ```terraform
+  module "example" {
+    source = "github.com/your-username/your-module-repo/module-path"
+  }
+  ```
 
-1. **GitHub Repository**
-you can use the short syntax by specifying the GitHub username, repository name, and the module path within the repository. Terraform will use the latest release of the module.
+3. Terraform Registry
+  You can use the registry as the source. Specify the full namespace and module name.
 
-```terraform
-module "example" {
-  source = "github.com/your-username/your-module-repo/module-path"
-}
-```
-
-1. Terraform Registry
-You can use the registry as the source. Specify the full namespace and module name.
-
-```terraform
-module "example" {
-  source = "namespace/module-name/registry"
-}
-```
+  ```terraform
+  module "example" {
+    source = "namespace/module-name/registry"
+  }
+  ```
 
 [Modules Sources](https://developer.hashicorp.com/terraform/language/modules/sources)
 
@@ -231,6 +229,65 @@ To refactor our actual terraform structure into a module, we had to move all the
 ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/f045fc64-385e-4ecd-a395-44172a3cb20a)
 
 
+## Working with files in Terraform
+
+Working with files in Terraform typically involves tasks like reading file contents, checking if files or directories exist, and manipulating file paths. Terraform provides a set of functions and resources that allow you to perform these file-related operations
+
+### Upload a File to a Bucket
+
+
+```terraform
+resource "aws_s3_object" "object" {
+  bucket = "your_bucket_name"
+  key    = "new_object_key"
+  source = "path/to/file"
+  etag = filemd5("path/to/file")
+}
+```
+
+[Upload a file to Bucket documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object)
+
+### File System and Workspace Info
+
+In Terraform, you can access information about the filesystem and workspace (Terraform environment) using various built-in functions and variables. This information can be useful for creating conditional logic, generating dynamic configuration, or for gaining insights into your Terraform environment.
+
+In terraform there is a special variable called `path` that allows us to reference local paths:
+
+- **`path.module`**: This variable returns the filesystem path of the directory containing the Terraform configuration file where it is used. It can be handy for constructing relative paths within your configuration.
+
+- **`path.root`**: This variable returns the root directory of the current Terraform project. It is useful when you need to reference files or resources located outside the module directory.
+
+  ```terraform
+    resource "aws_s3_object" "index_html" { 
+  	bucket = aws_s3_bucket.website_bucket.bucket 
+  	key = "index.html" 
+  	source = "${path.root}/public/index.html" 
+  }
+  ```
+
+[Special path variables documentatin](https://developer.hashicorp.com/terraform/language/expressions/references#filesystem-and-workspace-info)
+
+
+### Functions in Terraform
+
+#### `filemd5`
+
+`filemd5` is a variant of md5 that hashes the contents of a given file rather than a literal string. Is a built-in function that calculates the MD5 checksum of a file at a specified path. It is often used to verify the integrity of a file by comparing its MD5 checksum to a known or expected value. 
+
+[filemd5 documentation](https://developer.hashicorp.com/terraform/language/functions/filemd5)
+
+
+#### `fileexists`
+
+The `fileexists` function in Terraform determines whether a file exists at a given path. It takes a single argument, which is the path to the file to check. The function returns **true** if the file exists, and **false** otherwise.
+
+The `fileexists` function is evaluated during configuration parsing, rather than at apply time. This means that it can only be used with files that are already present on disk before Terraform takes any actions. The function also works only with regular files. If used with a directory, FIFO, or other special mode, it will return an error.
+
+```terraform
+condition = fileexists(var.error_html_filepath)
+```
+
+[Fileexists documentation](https://developer.hashicorp.com/terraform/language/functions/fileexists)
 
 
 
