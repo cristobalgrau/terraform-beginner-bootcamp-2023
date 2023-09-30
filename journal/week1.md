@@ -290,4 +290,133 @@ condition = fileexists(var.error_html_filepath)
 [Fileexists documentation](https://developer.hashicorp.com/terraform/language/functions/fileexists)
 
 
+## Terraform Locals
+
+In Terraform, local values, also known as locals, are a way to declare and define reusable values within your Terraform configuration. These local values are computed and evaluated during the Terraform execution plan phase, and their primary purpose is to simplify your configurations, make them more readable, and avoid code repetition.
+
+```terraform
+locals {
+  s3_origin_id = "MyS3Origin"
+}
+```
+
+[Local Values documentation](https://developer.hashicorp.com/terraform/language/values/locals)
+
+
+## Terraform Data Sources
+
+In Terraform, data sources are a way to retrieve and use information from external sources, such as cloud providers, APIs, databases, or other systems, within your Terraform configurations. Data sources allow you to import and reference data that is outside the scope of your Terraform-managed infrastructure. Data retrieved from data sources can be used for various purposes, including configuring resources, creating dependencies, and making decisions within your configuration.
+
+This is useful when we want to reference cloud resources without importing them.
+
+```tf
+data "aws_caller_identity" "current" {}
+
+output "account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+```
+
+[Data Sources documentation](https://developer.hashicorp.com/terraform/language/data-sources)
+
+## Working with JSON
+
+We use the jsonencode to create the json policy inline in the hcl.
+
+```tf
+> jsonencode({"hello"="world"})
+{"hello":"world"}
+```
+
+[jsonencode](https://developer.hashicorp.com/terraform/language/functions/jsonencode)
+
+## CloudFront implementation
+
+To help with readability of the code and simplify the text, was created 2 new .tf files: `resource-cdn.tf` and `resource-storage.tf`. In the file `resource-storage.tf` we cut and paste the code in `main.tf` (modules level) related to the access to the S3 (our storage)
+
+To grant access to CloudFront in out project we have to set the following in the above mentioned new files:
+
+- Set the resource [aws_cloudfront_distribution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) in `resource-cdn.tf`. This is to create the CloudFront distribution
+  ```tf
+  locals {
+    s3_origin_id = "MyS3Origin"
+  }
+
+  resource "aws_cloudfront_distribution" "s3_distribution" {
+    origin {
+      domain_name              = aws_s3_bucket.website_bucket.bucket_regional_domain_name
+      origin_access_control_id = aws_cloudfront_origin_access_control.default.id
+      origin_id                = local.s3_origin_id
+    }
+
+    enabled             = true
+    is_ipv6_enabled     = true
+    comment             = "Static website hosting for : ${var.bucket_name}"
+    default_root_object = "index.html"
+
+    #aliases = ["mysite.example.com", "yoursite.example.com"]
+
+    default_cache_behavior {
+      allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+      cached_methods   = ["GET", "HEAD"]
+      target_origin_id = local.s3_origin_id
+
+      forwarded_values {
+        query_string = false
+
+        cookies {
+          forward = "none"
+        }
+      }
+
+      viewer_protocol_policy = "allow-all"
+      min_ttl                = 0
+      default_ttl            = 3600
+      max_ttl                = 86400
+    }
+    price_class = "PriceClass_200"
+
+    restrictions {
+      geo_restriction {
+        restriction_type = "none"
+        locations        = []
+      }
+    }
+  ```
+
+- Set the resource [aws_cloudfront_origin_access_control](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_control) in `resource-cdn.tf`. This is to control access to the CloudFront distribution's Origin
+  ```tf
+  resource "aws_cloudfront_origin_access_control" "default" {
+    name                              = "OAC ${var.bucket_name}"
+    description                       = "Origin Acces Controls for Static Website Hosting ${var.bucket_name}"
+    origin_access_control_origin_type = "s3"
+    signing_behavior                  = "always"
+    signing_protocol                  = "sigv4"
+  }
+  ```
+
+- Set the bucket policy [aws_s3_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) in `resource-storage.tf`. This is to grant access to the S3 bucket from CloudFront
+  ```tf
+  resource "aws_s3_bucket_policy" "bucket_policy" {
+    bucket = aws_s3_bucket.website_bucket.bucket
+    #policy = data.aws_iam_policy_document.allow_access_from_another_account.json
+    policy = jsonencode({
+      "Version" = "2012-10-17",
+      "Statement" = {
+        "Sid" = "AllowCloudFrontServicePrincipalReadOnly",
+        "Effect" = "Allow",
+        "Principal" = {
+          "Service" = "cloudfront.amazonaws.com"
+        },
+        "Action" = "s3:GetObject",
+        "Resource" = "arn:aws:s3:::${aws_s3_bucket.website_bucket.id}/*",
+        "Condition" = {
+        "StringEquals" = {
+            #"AWS:SourceArn": data.aws_caller_identity.current.arn
+            "AWS:SourceArn" = "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:distribution/${aws_cloudfront_distribution.s3_distribution.id}"
+          }
+        }
+      },
+  ```
+
 
