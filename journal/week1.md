@@ -419,4 +419,29 @@ To grant access to CloudFront in out project we have to set the following in the
       },
   ```
 
+## Lifecycle of Resources
+
+In Terraform, the `lifecycle` meta-argument is used to control certain aspects of a resource's lifecycle. It allows you to customize how Terraform manages a resource over time, including when it should be created, updated, or destroyed. 
+
+[The lifecycle Meta-Argument documentation](https://developer.hashicorp.com/terraform/language/meta-arguments/lifecycle)
+
+The arguments available within a lifecycle block are the following:
+
+- **`create_before_destroy`**: This setting controls whether Terraform creates a new resource before destroying the existing one. This can be useful for resources that need to be replaced rather than updated in place.
+
+- **`prevent_destroy`**: This setting prevents Terraform from destroying a resource. This can be used to protect critical resources from accidental deletion.
+
+- **`ignore_changes`**: This setting tells Terraform to ignore changes to specific attributes of a resource. This can be useful when you want to manage certain attributes manually or when changes should not trigger updates.
+
+- **`replace_triggered_by`**: Replaces the resource when any of the referenced items change. Plain data values such as Local Values and Input Variables don't have any side-effects to plan against and so they aren't valid in replace_triggered_by.
+
+In our project, we are using `ignore_changes` as a reference to avoid Terraform trying to update the structure with just a minor update in the html web pages. 
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/df85f42f-9539-4c92-9238-e4c3fbd00377)
+
+In the above code, we assure that if there is any change in the etag (our checksum for our html pages), terraform ignores the change and doesn't run an update. And, to control if we want to trigger an update for a major change in the html code we created the variable `content_version`, so we can trigger the update when it is really needed 
+
+You can use terraform_data's behavior of planning an action each time input changes to indirectly use a plain value to trigger replacement.
+
+[The terraform_data Managed Resource Type documentation](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
 
