@@ -519,3 +519,51 @@ This command invalidates the cache of the CloudFront distribution with the ID `$
 The `triggers_replace` attribute on the `terraform_data.invalidate_cache` resource specifies that the `local-exec` provisioner should be executed whenever the output of the `terraform_data.content_version` resource changes.
 
 This configuration will ensure that the cache of the CloudFront distribution is always invalidated whenever the content version changes. This is useful for ensuring that users always see the latest version of the content.
+
+## Upload more than one asset at the time to the S3 Bucket
+
+Terraform is not intended to be used to manage files or the contents of the storage directly, but there is a way we can do it for this project, just as a practical matter.
+
+We can make use of the Meta-Argument `for_each`
+
+### `for_each`
+
+ in Terraform is used to create multiple instances of a resource or module block based on a map or set of values. It allows you to dynamically generate and manage multiple resources or modules with unique configurations, all defined within a single Terraform configuration block.
+
+We introduced the `for_each` in the file `resource-storage.tf` as follows:
+
+```tf
+resource "aws_s3_object" "upload_assets" {
+  for_each = fileset(var.assets_path,"*{jpg,png,gif}")
+  bucket = aws_s3_bucket.website_bucket.bucket
+  key    = "assets/${each.key}"
+  source = "${var.assets_path}/${each.key}"
+  etag = filemd5("${var.assets_path}/${each.key}")
+  lifecycle {
+    replace_triggered_by = [ terraform_data.content_version.output ]
+    ignore_changes = [ etag ]
+  }
+}
+```
+
+Here, The `for_each` expression iterates over a set of files found in the directory specified by the variable `var.assets_path`. It uses the `fileset` function to select files based on the specified pattern, which matches files with extensions `.jpg, .png, and .gif`.
+
+[for_each documentation](https://developer.hashicorp.com/terraform/language/meta-arguments/for_each)
+
+### `fileset ()` function
+
+In Terraform, the `fileset` function is used to generate a set of file paths based on a given directory and a file-matching pattern. It's commonly used to iterate over files in a directory and select files that match a specific pattern or extension.
+
+The syntax of the `fileset` function is as follows:
+
+```tf
+fileset(directory, pattern)
+```
+
+- **directory**: The directory path in which you want to search for files.
+- **pattern**: A file matching pattern (or glob pattern) that defines the criteria for selecting files.
+
+The `fileset` function returns a set of file paths that match the specified pattern within the given directory.
+
+[fileset documentation](https://developer.hashicorp.com/terraform/language/functions/fileset)
+
