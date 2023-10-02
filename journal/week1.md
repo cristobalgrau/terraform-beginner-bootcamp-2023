@@ -441,7 +441,81 @@ In our project, we are using `ignore_changes` as a reference to avoid Terraform 
 
 In the above code, we assure that if there is any change in the etag (our checksum for our html pages), terraform ignores the change and doesn't run an update. And, to control if we want to trigger an update for a major change in the html code we created the variable `content_version`, so we can trigger the update when it is really needed 
 
+## Provisioner
+
+Provisioners in Terraform are used to execute scripts or shell commands on a local or remote machine as part of resource creation or destruction. Provisioners can be used to bootstrap a resource, cleanup before destroy, run configuration management, etc.
+
+They are not recommended for use by Hashicorp, as they can lead to unexpected results if not used correctly. Provisioners are a **Last Resort**
+
+[Provisioner documentation](https://developer.hashicorp.com/terraform/language/resources/provisioners/syntax)
+
+### `local-exec`
+
+These provisioners execute on the machine that hosts and executes Terraform commands. 
+
+```tf
+resource "aws_instance" "web" {
+  # ...
+
+  provisioner "local-exec" {
+    command = "echo The server's IP address is ${self.private_ip}"
+  }
+}
+```
+
+[local-exec documentation](https://developer.hashicorp.com/terraform/language/resources/provisioners/local-exec)
+
+### `remote-exec`
+
+These provisioners execute on a remote machine. You will need to provide credentials such as ssh to get into the machine
+
+```tf
+resource "aws_instance" "web" {
+  # ...
+
+  # Establishes a connection to be used by all
+  # generic remote provisioners (i.e. file/remote-exec)
+  connection {
+    type     = "ssh"
+    user     = "root"
+    password = var.root_password
+    host     = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "puppet apply",
+      "consul join ${aws_instance.web.private_ip}",
+    ]
+  }
+}
+```
+
+[remote-exec documentation](https://developer.hashicorp.com/terraform/language/resources/provisioners/remote-exec)
+
+
+## Terraform Data
+
 You can use terraform_data's behavior of planning an action each time input changes to indirectly use a plain value to trigger replacement.
 
 [The terraform_data Managed Resource Type documentation](https://developer.hashicorp.com/terraform/language/resources/terraform-data)
 
+To invalidate the cache of the CloudFront distribution when the content version changes, we added the following code in the `resource-cdn.tf` file:
+
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/98de2b09-d979-43a3-8d02-62751b04e15b)
+
+The `terraform_data` resource is used to store the output of the `terraform_data.content_version` resource. The `terraform_data.content_versio`n resource stores the content version of the file that is stored in S3.
+
+The local-exec provisioner is used to execute the following command:
+
+```tf
+aws cloudfront create-invalidation \
+--distribution-id ${aws_cloudfront_distribution.s3_distribution.id} \
+--paths '/*'
+```
+
+This command invalidates the cache of the CloudFront distribution with the ID `${aws_cloudfront_distribution.s3_distribution.id}` for all paths.
+
+The `triggers_replace` attribute on the `terraform_data.invalidate_cache` resource specifies that the `local-exec` provisioner should be executed whenever the output of the `terraform_data.content_version` resource changes.
+
+This configuration will ensure that the cache of the CloudFront distribution is always invalidated whenever the content version changes. This is useful for ensuring that users always see the latest version of the content.
