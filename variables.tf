@@ -15,5 +15,10 @@ variable "error_html_filepath" {
 }
 
 variable "content_version" {
-  type        = number
+  type = number
+}
+
+variable "assets_path" {
+  description = "Path to assets folder"
+  type = string
 }
