@@ -1,5 +1,43 @@
 # Terraform Beginner Bootcamp 2023 - Week 1
 
+
+  * [Root Module Structure](#root-module-structure)
+  * [Terraform and Input Variables](#terraform-and-input-variables)
+    + [Terraform Cloud Variables](#terraform-cloud-variables)
+    + [Input Variables](#input-variables)
+    + [Command-line Flags](#command-line-flags)
+    + [terraform.tfvars](#terraformtfvars)
+    + [auto.tfvars](#autotfvars)
+    + [Order of Terraform Variables](#order-of-terraform-variables)
+  * [Configuration Drift - What to do](#configuration-drift---what-to-do)
+    + [`terraform import`](#-terraform-import-)
+    + [Terraform refresh](#terraform-refresh)
+  * [Terraform Modules](#terraform-modules)
+    + [Passing Input Variables to a Module](#passing-input-variables-to-a-module)
+    + [Modules source](#modules-source)
+    + [Refactoring the code into modules](#refactoring-the-code-into-modules)
+  * [Working with files in Terraform](#working-with-files-in-terraform)
+    + [Upload a File to a Bucket](#upload-a-file-to-a-bucket)
+    + [File System and Workspace Info](#file-system-and-workspace-info)
+    + [Functions in Terraform](#functions-in-terraform)
+      - [`filemd5`](#-filemd5-)
+      - [`fileexists`](#-fileexists-)
+  * [Terraform Locals](#terraform-locals)
+  * [Terraform Data Sources](#terraform-data-sources)
+  * [Working with JSON](#working-with-json)
+  * [CloudFront implementation](#cloudfront-implementation)
+  * [Lifecycle of Resources](#lifecycle-of-resources)
+  * [Provisioner](#provisioner)
+    + [`local-exec`](#-local-exec-)
+    + [`remote-exec`](#-remote-exec-)
+  * [Terraform Data](#terraform-data)
+  * [Upload more than one asset at the time to the S3 Bucket](#upload-more-than-one-asset-at-the-time-to-the-s3-bucket)
+    + [`for_each`](#-for-each-)
+    + [`fileset ()` function](#-fileset-----function)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 ## Root Module Structure
 
 Our root module structure is as follows:

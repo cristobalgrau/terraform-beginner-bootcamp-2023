@@ -26,6 +26,7 @@
 - [Refactor Automated Terraform Login](#refactor-automated-terraform-login)
 - [Creating an Alias for `terraform` command](#creating-an-alias-for-terraform-command)
 
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 ## Semantic Versioning
 
