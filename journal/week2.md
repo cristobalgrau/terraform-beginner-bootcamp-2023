@@ -56,6 +56,10 @@ https://sinatrarb.com/
 
 ## Terratowns Mock Server
 
+It was clone the mock server from [Andrew Brown's](https://github.com/omenking) GitHub. The reference git repository is the following:
+
+https://github.com/omenking/terraform-beginner-bootcamp-2023/tree/02fa4eb7652027cea071b18d55610e587bb883fb/terratowns_mock_server
+
 ### Running the web server
 
 We can run the web server by executing the following commands:
@@ -83,5 +87,51 @@ CRUD operations are fundamental to many software systems, especially those that 
 CRUD operations are not limited to databases alone and can be applied to various data storage and manipulation scenarios, including file systems, APIs, and more. They provide a standardized way to interact with and manage data in software applications, making them a fundamental concept in programming and software development.
 
 ![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/a7d5b9a7-0c2d-4824-bd69-23156f0ecf44)
+
+## Implementing a Custom Provider
+
+### 1. Creating the app coding
+It was created the code for all the API endpoints that our app needs. In this case was made in `golang` language. See the original code from [Andrew Brown's](https://github.com/omenking/terraform-beginner-bootcamp-2023/blob/02fa4eb7652027cea071b18d55610e587bb883fb/terraform-provider-terratowns/main.go#L4) GitHub.
+
+### 2. Configure Terraform for Local Custom Providers
+You need to specify how Terraform will install the custom local provider. For this it was created the file `terraformrc` who will configure Terraform to look at and store local providers' complements and exclude the direct installation of local providers, which means that Terraform only will use a filesystem mirror to manage the complements
+
+```bs
+provider_installation {
+  filesystem_mirror {
+    path = "/home/gitpod/.terraform.d/plugins"
+    include = ["local.providers/*/*"]
+  } 
+  direct {
+   exclude = ["local.providers/*/*"] 
+  }
+}
+```
+
+### 3. Compile the local Custom Provider
+Created a Bash script used to build and distribute a local Terraform plugin to two different locations, one for the x86_64 architecture and another for the Linux platform with amd64 architecture. And also to perform some cleanup operations before compiling and copying files.
+
+The file was named `build_provider` and was chmod as an executable file:
+
+```bs
+#! /usr/bin/bash
+
+PLUGIN_DIR="/home/gitpod/.terraform.d/plugins/local.providers/local/terratowns/1.0.0/"
+PLUGIN_NAME="terraform-provider-terratowns_v1.0.0"
+
+# https://servian.dev/terraform-local-providers-and-registry-mirror-configuration-b963117dfffa
+cd $PROJECT_ROOT/terraform-provider-terratowns
+cp $PROJECT_ROOT/terraformrc /home/gitpod/.terraformrc
+rm -rf /home/gitpod/.terraform.d/plugins
+rm -rf $PROJECT_ROOT/.terraform
+rm -rf $PROJECT_ROOT/.terraform.lock.hcl
+go build -o $PLUGIN_NAME
+mkdir -p $PLUGIN_DIR/x86_64/
+mkdir -p $PLUGIN_DIR/linux_amd64/
+cp $PLUGIN_NAME $PLUGIN_DIR/x86_64
+cp $PLUGIN_NAME $PLUGIN_DIR/linux_amd64
+```
+
+
 
 
