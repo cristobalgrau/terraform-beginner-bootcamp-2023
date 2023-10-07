@@ -113,7 +113,7 @@ Created a Bash script used to build and distribute a local Terraform plugin to t
 
 The file was named `build_provider` and was chmod as an executable file:
 
-```bs
+```bash
 #! /usr/bin/bash
 
 PLUGIN_DIR="/home/gitpod/.terraform.d/plugins/local.providers/local/terratowns/1.0.0/"
@@ -132,6 +132,49 @@ cp $PLUGIN_NAME $PLUGIN_DIR/x86_64
 cp $PLUGIN_NAME $PLUGIN_DIR/linux_amd64
 ```
 
+### 4. Add local Provider in Terraform
 
+Added our local custom provider as a required provider in Terraform for the project.
 
+This code added to `main.tf` essentially tells Terraform that your configuration depends on a provider named "terratowns" with a specific source and version. Terraform will use this information to download and manage the specified provider when you apply your configuration.
 
+```tf
+terraform {
+  required_providers {
+    terratowns = {
+      source = "local.providers/local/terratowns"
+      version = "1.0.0"
+    }
+  }
+}
+```
+
+And then add the configuration to allow Terraform to communicate with the "terratowns" provider at the specified endpoint, using the provided user UUID and token for authentication and authorization purposes.
+
+```tf
+provider "terratowns" {
+  endpoint = "http://localhost:4567/api"
+  user_uuid = "123456-7890123456-gdhuaknch-example"
+  token = "abcd-fghuj-1234567890-example"
+}
+```
+
+### 5. Created Terraform Resource Block
+
+We provided a Terraform resource block that defines an instance of a resource of type "terratowns_home".
+
+```tf
+resource "terratowns_home" "home" {
+  name = "Name for you town in this project"
+  description = <<DESCRIPTION
+      Add your desired description for you terratown
+    DESCRIPTION
+  domain_name = "3fdq3gz.cloudfront.net"
+  town = "the specific module inside the terratowns"
+  content_version = 1
+}
+```
+
+This declares an instance of a resource of type "terratowns_home" and assigns it the name "home." The "home" part is called a resource instance alias, which allows you to refer to this specific instance elsewhere in your Terraform configuration.
+
+This Terraform resource block is used to define and configure a specific instance of a "terratowns_home" resource, providing values for its attributes. When you apply your Terraform configuration, Terraform will create or update the corresponding resource in your infrastructure based on these settings.
