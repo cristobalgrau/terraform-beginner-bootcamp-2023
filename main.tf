@@ -13,12 +13,12 @@ terraform {
   #   name = "terra-house-lab"
   #   }
   # }
-#   cloud {
-#     organization = "GrauTerraformLab"
-#     workspaces {
-#       name = "terra-house-lab"
-#     }
-#   }
+  cloud {
+    organization = "GrauTerraformLab"
+    workspaces {
+      name = "terra-house-lab"
+    }
+  }
 
 }
 
@@ -28,23 +28,41 @@ provider "terratowns" {
   token = var.terratowns_access_token
 }
 
-module "terrahouse_aws"{
-  source = "./modules/terrahouse_aws"
+module "home_the_witcher_hosting"{
+  source = "./modules/terrahome_aws"
   user_uuid = var.teacherseat_user_uuid
-  index_html_filepath = var.index_html_filepath
-  error_html_filepath = var.error_html_filepath
-  assets_path = var.assets_path
-  content_version = var.content_version
+  public_path = var.the_witcher.public_path
+  content_version = var.the_witcher.content_version
 }
 
-resource "terratowns_home" "home" {
+resource "terratowns_home" "home_the_witcher" {
   name = "The Witcher"
   description = <<DESCRIPTION
  The Witcher is a series of six fantasy novels and 15 short stories
   written by Polish author Andrzej Sapkowski. 
   The series revolves around the eponymous "witcher", Geralt of Rivia.
 DESCRIPTION
-  domain_name = module.terrahouse_aws.cloudfront_url
+  domain_name = module.home_the_witcher_hosting.domain_name
   town = "missingo"
-  content_version = 1
+  content_version = var.the_witcher.content_version
+}
+
+module "home_assassins_creed_hosting"{
+  source = "./modules/terrahome_aws"
+  user_uuid = var.teacherseat_user_uuid
+  public_path = var.assassins_creed.public_path
+  content_version = var.assassins_creed.content_version
+}
+
+resource "terratowns_home" "home_assassins_creed" {
+  name = "Assassins Creed"
+  description = <<DESCRIPTION
+ The Game is set in a fictional history of real-world events, 
+ taking place primarily during the Third Crusade in the Holy Land in 1191.
+ In the game, a modern-day man named Desmond Miles who, through a machine called the Animus, 
+ relives the genetic memories of his ancestor, Altaïr Ibn-La'Ahad.
+DESCRIPTION
+  domain_name = module.home_assassins_creed_hosting.domain_name
+  town = "missingo"
+  content_version = var.assassins_creed.content_version
 }
