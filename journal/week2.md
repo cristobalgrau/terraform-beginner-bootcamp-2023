@@ -1,5 +1,25 @@
 # Terraform Beginner Bootcamp 2023 - Week 2
 
+
+  * [Working with Ruby](#working-with-ruby)
+    + [Bundler](#bundler)
+      - [Install Gems](#install-gems)
+      - [Executing ruby scripts in the context of bundler](#executing-ruby-scripts-in-the-context-of-bundler)
+    + [Sinatra](#sinatra)
+  * [Terratowns Mock Server](#terratowns-mock-server)
+    + [Running the web server](#running-the-web-server)
+    + [Create the API endpoints in the Web-server](#create-the-api-endpoints-in-the-web-server)
+  * [Implementing a Custom Provider](#implementing-a-custom-provider)
+    + [1. Creating the app coding](#1-creating-the-app-coding)
+    + [2. Configure Terraform for Local Custom Providers](#2-configure-terraform-for-local-custom-providers)
+    + [3. Compile the local Custom Provider](#3-compile-the-local-custom-provider)
+    + [4. Add local Provider in Terraform](#4-add-local-provider-in-terraform)
+    + [5. Created Terraform Resource Block](#5-created-terraform-resource-block)
+  * [Implementing more than one Resource/Home in TerraTown](#implementing-more-than-one-resource-home-in-terratown)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 ## Working with Ruby
 
 ### Bundler
@@ -179,9 +199,9 @@ This declares an instance of a resource of type "terratowns_home" and assigns it
 
 This Terraform resource block is used to define and configure a specific instance of a "terratowns_home" resource, providing values for its attributes. When you apply your Terraform configuration, Terraform will create or update the corresponding resource in your infrastructure based on these settings.
 
-## Implementing more than one Resources/Home in TerraTown
+## Implementing more than one Resource-Home in TerraTown
 
-1. **Create the corresponding variables for each resource:** In your root `variable.tf` you need to set you variables for each resource. For convenience and simplicity in the code, you can set them as an **Object Type** and include like a sub-variables on them, like an array.
+1. **Create the corresponding variables for each resource:** In your root `variable.tf` you need to set your variables for each resource. For convenience and simplicity in the code, you can set them as an **Object Type** and include like sub-variables on them, like an array.
 
 ```tf
 variable "name1...nameX" {
