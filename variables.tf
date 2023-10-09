@@ -23,3 +23,10 @@ variable "assassins_creed" {
     content_version = number
   })
 }
+
+variable "venezuela" {
+  type = object({
+    public_path = string
+    content_version = number
+  })
+}

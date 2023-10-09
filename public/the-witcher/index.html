@@ -1,13 +1,69 @@
-Hello <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Witcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black; 
+            color: white; 
+        }
+
+        header {
+            background-color: #B02A0D; 
+            text-align: center;
+            color: #D8D5D5; 
+            padding: 20px 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .synopsis {
+            width: 80%;
+            margin: 0 auto;
+            text-align: justify;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .synopsis img {
+            max-width: 45%;
+        }
+
+        .synopsis p {
+            text-align: justify;
+            max-width: 50%;
+            margin-top: 0;
+            color: white; 
+        }
+
+        .synopsis-title {
+            text-align: center;
+            margin-bottom: 10px;
+            color: white; 
+        }
+    </style>
 </head>
 <body>
-    <h1>The Witcher</h1>
-    <img src="/assets/the-witcher-3.jpg"/>
-    <img src="/assets/the-witcher-3-dlc.jpg"/>
+    <header>
+        <h1 style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);">THE WITCHER</h1>
+    </header>
+
+    <div class="synopsis-title">
+        <h2>SYNOPSIS</h2>
+    </div>
+
+    <div class="synopsis">
+        <img src="/assets/the-witcher-3.jpg" alt="Left Image" width="200">
+        <p>The Witcher is a series of six fantasy novels and 15 short stories written by Polish author Andrzej Sapkowski. The series is set in a gritty medieval-inspired fantasy realm, and it follows the adventures of Geralt of Rivia, a skilled monster hunter known as a Witcher. Witchers are mutants who undergo rigorous training and alchemical experiments to gain extraordinary abilities, making them formidable warriors and monster slayers. <br><br>The Witcher novels offer readers a dark and morally complex fantasy world where monsters, magic, and political intrigue collide. Geralt of Rivia, with his unique abilities and enigmatic personality, takes center stage in a narrative that explores themes of humanity, destiny, and the consequences of one's actions.</p>
+        <img src="/assets/the-witcher-3-dlc.jpg" alt="Right Image" width="200">
+    </div>
 </body>
 </html>

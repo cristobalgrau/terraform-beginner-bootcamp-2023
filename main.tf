@@ -43,7 +43,7 @@ resource "terratowns_home" "home_the_witcher" {
   The series revolves around the eponymous "witcher", Geralt of Rivia.
 DESCRIPTION
   domain_name = module.home_the_witcher_hosting.domain_name
-  town = "missingo"
+  town = "gamers-grotto"
   content_version = var.the_witcher.content_version
 }
 
@@ -63,6 +63,25 @@ resource "terratowns_home" "home_assassins_creed" {
  relives the genetic memories of his ancestor, Altaïr Ibn-La'Ahad.
 DESCRIPTION
   domain_name = module.home_assassins_creed_hosting.domain_name
-  town = "missingo"
+  town = "gamers-grotto"
   content_version = var.assassins_creed.content_version
+}
+
+module "home_venezuela_hosting"{
+  source = "./modules/terrahome_aws"
+  user_uuid = var.teacherseat_user_uuid
+  public_path = var.venezuela.public_path
+  content_version = var.venezuela.content_version
+}
+
+resource "terratowns_home" "home_venezuela" {
+  name = "Best Beaches in Venezuela"
+  description = <<DESCRIPTION
+ Welcome to our virtual journey through the stunning landscapes of Venezuela! 
+ Explore the beauty of this South American paradise as we take you on a visual 
+ tour of some of the best beaches the country has to offer.
+DESCRIPTION
+  domain_name = module.home_venezuela_hosting.domain_name
+  town = "the-nomad-pad"
+  content_version = var.venezuela.content_version
 }
