@@ -169,12 +169,74 @@ resource "terratowns_home" "home" {
   description = <<DESCRIPTION
       Add your desired description for you terratown
     DESCRIPTION
-  domain_name = "3fdq3gz.cloudfront.net"
+  domain_name = "3fdq3gz.cloudfront.net"  #temporary domain
   town = "the specific module inside the terratowns"
-  content_version = 1
+  content_version = var.name1.content_version
 }
 ```
 
 This declares an instance of a resource of type "terratowns_home" and assigns it the name "home." The "home" part is called a resource instance alias, which allows you to refer to this specific instance elsewhere in your Terraform configuration.
 
 This Terraform resource block is used to define and configure a specific instance of a "terratowns_home" resource, providing values for its attributes. When you apply your Terraform configuration, Terraform will create or update the corresponding resource in your infrastructure based on these settings.
+
+## Implementing more than one Resources/Home in TerraTown
+
+1. **Create the corresponding variables for each resource:** In your root `variable.tf` you need to set you variables for each resource. For convenience and simplicity in the code, you can set them as an **Object Type** and include like a sub-variables on them, like an array.
+
+```tf
+variable "name1...nameX" {
+type = object({
+  public_path = string
+  content_version = number
+  })
+}
+```
+
+2. **Set the values for the variables in your `terraform.tfvars` file**
+
+```tf
+name1 = {
+    public_path = "/workspace/terraform-beginner-bootcamp-2023/public/name1_folder"
+    content_version = 1
+}
+```
+
+3. **Create the modules calls and the resource in your `main.tf` file:** You have to create as many modules and resources necessary for the number of homes you are going to create in TerraTown
+
+```tf
+# -------Resource 1-------
+module "name1_hosting"{
+  source = "./modules/terrahome_aws"
+  user_uuid = var.teacherseat_user_uuid
+  public_path = var.name1.public_path
+  content_version = var.name1.content_version
+}
+
+resource "terratowns_home" "home_name1" {
+  name = "Town1 name"
+  description = <<DESCRIPTION
+ A brief description of your home that will be visible in TerraTown
+DESCRIPTION
+  domain_name = module.name1_hosting.domain_name
+  town = "town_category"
+  content_version = var.name1.content_version
+}
+
+# -------Resource 2-------
+module "name2_hosting"{
+  source = "./modules/terrahome_aws"
+  user_uuid = var.teacherseat_user_uuid
+  public_path = var.name2.public_path
+  content_version = var.name2.content_version
+}
+
+resource "terratowns_home" "home_name2" {
+  name = "Town2 name"
+  description = <<DESCRIPTION
+ A brief description of your home that will be visible in TerraTown
+DESCRIPTION
+  domain_name = module.name2_hosting.domain_name
+  town = "town_category"
+  content_version = var.name2.content_version
+}
+```
