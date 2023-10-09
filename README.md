@@ -1,6 +1,7 @@
 # Terraform Beginner Bootcamp 2023
 
-![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/8bc9e9f7-a0d6-4b06-bc00-42bf7f5b7c03)
+![image](https://github.com/cristobalgrau/terraform-beginner-bootcamp-2023/assets/119089907/c9c7891c-ae3b-44e0-a0ca-ef0678a06e96)
+
 
 
 
